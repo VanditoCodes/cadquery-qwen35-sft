@@ -1,6 +1,6 @@
 # Qwen 3.5-4B CadQuery Fine Tuning
 
-This repository is my 2nd (untimed) attempt of finetuning a model to generate CadQuery Python code from imaages of 3D CAD models. 
+This repository is my 2nd (untimed) attempt of finetuning a model to generate CadQuery Python code from images of 3D CAD models. 
 
 In this attempt, I use a vision language model in the hope that it can better translate a CAD image into executable CadQuery code, as compared to converting the image to embeddings and feeding the same to a regular language model
 
