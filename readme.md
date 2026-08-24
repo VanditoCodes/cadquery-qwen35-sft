@@ -34,7 +34,6 @@ Finetuned Qwen3.5-4B using LoRA:
 - **LoRA alpha:** 32
 - **Learning rate:** 2e-4
 - **Effective batch size:** 16
-- **Precision:** bfloat16
 
 The training code and notebooks in this repository contain the preprocessing, training and evaluation pipeline.
 
@@ -42,7 +41,7 @@ The training code and notebooks in this repository contain the preprocessing, tr
 
 The generated CadQuery code is executed to reconstruct the CAD geometry. The generated geometry is then compared against the reference geometry using voxel IoU.
 
-My current SFT checkpoint is **step 27918 (3 epochs)**.
+My current SFT checkpoint is **step 27618 (3 epochs)**.
 
 ### Results
 
