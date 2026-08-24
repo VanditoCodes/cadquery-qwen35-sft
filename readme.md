@@ -2,7 +2,7 @@
 
 This repository is my 2nd (untimed) attempt of finetuning a model to generate CadQuery Python code from images of 3D CAD models. 
 
-In this attempt, I use a vision language model in the hope that it can better translate a CAD image into executable CadQuery code, as compared to converting the image to embeddings and feeding the same to a regular language model
+In this attempt, I use a vision language model in the hope that it can better translate a CAD image into executable CadQuery code, as compared with converting the image to embeddings and feeding the same to a regular language model
 
 ## Dataset
 
@@ -19,7 +19,7 @@ The model is trained to predict only the CadQuery response (image and instructio
 
 ## Zero-Shot Accuracy
 
-Over a held out set of 200 samples, the model was unable to successfully a single valid geometry. While the code produced by the model qualitatively looked good, it had a lot of syntax issues (i.e. calling cq.WorkPlane instead of cq.Workplane, making up methods that did not exist).
+Over a held out set of 200 samples, the model was unable to successfully produce a single valid geometry. While the code produced by the model qualitatively looked good, it had a lot of syntax issues (i.e. calling cq.WorkPlane instead of cq.Workplane, making up methods that did not exist).
 
 ## Fine-Tuning
 
@@ -54,7 +54,7 @@ Evaluation was performed on a held-out set of 200 samples.
 | Std. Dev. | 0.3931 |
 | Valid samples | 186 / 200 |
 
-Already, the model has seen a significant improvement over zero shot.
+Already, the model shows a significant improvement over zero shot.
 
 This is the current SFT baseline that I am using for further experiments.
 
