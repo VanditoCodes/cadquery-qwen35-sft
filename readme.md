@@ -50,10 +50,10 @@ Evaluation was performed on a held-out set of 200 samples.
 
 | Metric | Result |
 |---|---:|
-| Mean IoU | 0.4955 |
-| Median IoU | 0.4302 |
-| Std. Dev. | 0.3805 |
-| Valid samples | 169 / 200 |
+| Mean IoU | 0.5548 |
+| Median IoU | 0.5587 |
+| Std. Dev. | 0.3931 |
+| Valid samples | 186 / 200 |
 
 Already, the model has seen a significant improvement over zero shot.
 
