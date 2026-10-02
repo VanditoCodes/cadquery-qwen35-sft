@@ -1,12 +1,14 @@
 # Qwen 3.5-4B CadQuery Fine Tuning
 
-This repository is my 2nd (untimed) attempt of finetuning a model to generate CadQuery Python code from images of 3D CAD models. 
+This repository finetunes a vision language model to generate CadQuery Python code from images of 3D CAD models. 
 
-In this attempt, I use a vision language model in the hope that it can better translate a CAD image into executable CadQuery code, as compared to converting the image to embeddings and feeding the same to a regular language model
+I use a vision language model in the hope that it can better translate a CAD image into executable CadQuery code, as compared with converting the image to embeddings and feeding the same to a regular language model.
 
 ## Dataset
 
 I use the [CADCODER/GenCAD-Code](https://huggingface.co/datasets/CADCODER/GenCAD-Code) dataset, which contains CAD images paired with CadQuery code.
+
+The dataset was introduced in [CAD-Coder: An Open-Source Vision-Language Model for Computer-Aided Design Code Generation](https://arxiv.org/abs/2505.14646). The original CAD-Coder repository can be found [here](https://github.com/anniedoris/CAD-Coder).
 
 The training set contains approximately **147k image/code pairs**.
 
@@ -43,16 +45,18 @@ The generated CadQuery code is executed to reconstruct the CAD geometry. The gen
 
 My current SFT checkpoint is **step 27618 (3 epochs)**.
 
-### Results
+For the final SFT vs RL comparison, evaluation was performed on the 100 samples marked as `hundred_subset` in the GenCAD-Code test split.
 
-Evaluation was performed on a held-out set of 200 samples.
+### SFT Baseline
+
+Using a voxel IoU evaluator:
 
 | Metric | Result |
-|---|---:|
-| Mean IoU | 0.5548 |
-| Median IoU | 0.5587 |
-| Std. Dev. | 0.3931 |
-| Valid samples | 186 / 200 |
+| --- | --- |
+| Mean IoU | 0.5887 |
+| Median IoU | 0.6136 |
+| Std. Dev. | 0.3830 |
+| Valid samples | 88 / 100 |
 
 Already, the model has seen a significant improvement over zero shot.
 
@@ -61,8 +65,61 @@ This is the current SFT baseline that I am using for further experiments.
 
 ## Reinforcement Learning
 
-I am currently using this SFT model as the starting point for further fine-tuning with reinforcement learning.
+I used this SFT model as the starting point for further fine-tuning with reinforcement learning. The idea is to have the model generate    CadQuery code, execute it to produce the corresponding geometry, and use the resulting voxel IoU as a reward, hoping that the model is able to get a better understanding of the geometry itself.
 
-The idea is to have the model generate CadQuery code, execute it to produce the corresponding geometry, and use the resulting voxel IoU as a reward.
+For this experiment, I use GRPO over 5,000 samples from the original training split for one epoch (1,250 steps), with 8 generations per prompt.
 
-This is currently a work in progress.
+The 5,000 samples had already been seen during SFT, but the optimization objective is different. SFT optimizes next-token prediction against the ground-truth code, while GRPO directly optimizes the geometric reward (in this case the IoU between the CAD object generated based on the code from the model v/s the object generated from the ground truth code).
+
+The RL run was significantly slower because each step requires generating multiple relatively long CadQuery programs, executing them, and evaluating the resulting geometry.
+
+Step 850 was selected based on the validation reward before running the final test evaluation.
+
+### Voxel IoU
+
+Using the same voxel IoU evaluator as the SFT model:
+
+| Metric | SFT | RL (step 850) |
+| --- | --- | --- |
+| Valid samples | 88 / 100 | 92 / 100 |
+| Mean IoU | 0.5887 | 0.5918 |
+| Median IoU | 0.6136 | 0.6894 |
+
+### B-Rep IoU
+
+I also evaluated the same outputs using the B-Rep IoU evaluator released with CAD-Coder.
+
+For the metrics below, failed or non-evaluable samples are assigned an IoU of 0.
+
+| Metric | SFT | RL (step 850) |
+| --- | --- | --- |
+| B-Rep evaluable samples | 88 / 100 | 91 / 100 |
+| Mean IoU | 0.6520 | 0.6685 |
+| Median IoU | 0.7887 | 0.8304 |
+
+For the 86 samples which were B-Rep evaluable for both models:
+
+| Metric | SFT | RL (step 850) |
+| --- | --- | --- |
+| Mean IoU | 0.7514 | 0.7621 |
+| Median IoU | 0.8614 | 0.8703 |
+
+Of these 86 samples, 26 improved after RL, 20 worsened, and 40 remained unchanged.
+
+RL also recovered 5 samples which were not B-Rep evaluable with the SFT model, while 2 samples that were valid with SFT were no longer evaluable after RL.
+
+![SFT vs RL B-Rep IoU comparison](comparison.png)
+
+The graph shows the B-Rep IoU for all 100 test samples, sorted by the SFT IoU. Failed or non-evaluable samples are assigned an IoU of 0.
+
+## Future Work
+
+The RL experiment was run on only 5,000 samples for one epoch, compared with the ~147k samples used during SFT.
+
+Some directions I would like to explore further are:
+
+- Make geometry computation more efficient
+- Train on more compute
+- Train using multiple views of each CAD model
+- Have the VLM first describe or reason about the geometry before generating the CadQuery code
+- Use richer geometric rewards beyond voxel IoU (include topological similarity, for example)
