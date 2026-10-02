@@ -4,4 +4,4 @@
 *.py[cod]
 compute_iou.py
 compare_brep_iou.py
-best_iou.pyq
+best_iou.py
