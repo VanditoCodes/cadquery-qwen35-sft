@@ -21,7 +21,7 @@ The model is trained to predict only the CadQuery response (image and instructio
 
 ## Zero-Shot Accuracy
 
-Over a held out set of 200 samples, the model was unable to successfully a single valid geometry. While the code produced by the model qualitatively looked good, it had a lot of syntax issues (i.e. calling cq.WorkPlane instead of cq.Workplane, making up methods that did not exist).
+Over a held out set of 200 samples, the model was unable to successfully produce a single valid geometry. While the code produced by the model qualitatively looked good, it had a lot of syntax issues (i.e. calling cq.WorkPlane instead of cq.Workplane, making up methods that did not exist).
 
 ## Fine-Tuning
 
@@ -58,7 +58,7 @@ Using a voxel IoU evaluator:
 | Std. Dev. | 0.3830 |
 | Valid samples | 88 / 100 |
 
-Already, the model has seen a significant improvement over zero shot.
+Already, the model shows a significant improvement over zero shot.
 
 This is the current SFT baseline that I am using for further experiments.
 
