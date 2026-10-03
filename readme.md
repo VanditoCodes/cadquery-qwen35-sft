@@ -99,6 +99,8 @@ For the metrics below, failed or non-evaluable samples are assigned an IoU of 0.
 | Mean IoU | 0.6520 | 0.6685 |
 | Median IoU | 0.7887 | 0.8304 |
 
+One additional RL output could be voxelized but produced a near zero volume solid and could not be evaluated using the B-Rep metric.
+
 For the 86 samples which were B-Rep evaluable for both models:
 
 | Metric | SFT | RL (step 850) |
